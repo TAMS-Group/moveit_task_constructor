@@ -38,7 +38,8 @@
 
 #include <moveit/task_constructor/solvers/cartesian_path.h>
 #include <moveit/planning_scene/planning_scene.h>
-#include <moveit/trajectory_processing/iterative_time_parameterization.h>
+#include <moveit/trajectory_processing/iterative_spline_parameterization.h>
+
 
 namespace moveit { namespace task_constructor { namespace solvers {
 
@@ -107,7 +108,7 @@ bool CartesianPath::plan(const planning_scene::PlanningSceneConstPtr& from,
 		for (const auto& waypoint : trajectory)
 			result->addSuffixWayPoint(waypoint, 0.0);
 
-		trajectory_processing::IterativeParabolicTimeParameterization timing;
+		trajectory_processing::IterativeSplineParameterization timing;
 		timing.computeTimeStamps(*result,
 		                         props.get<double>("max_velocity_scaling_factor"),
 		                         props.get<double>("max_acceleration_scaling_factor"));
