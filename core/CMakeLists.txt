@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
 	moveit_ros_planning_interface
 	moveit_task_constructor_msgs
 	roscpp
+	bio_ik
 	visualization_msgs
 	rviz_marker_tools
 )

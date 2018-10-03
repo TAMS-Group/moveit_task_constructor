@@ -39,6 +39,7 @@
 #include <moveit/task_constructor/solvers/cartesian_path.h>
 #include <moveit/planning_scene/planning_scene.h>
 #include <moveit/trajectory_processing/iterative_spline_parameterization.h>
+#include <bio_ik/bio_ik.h>
 
 
 namespace moveit { namespace task_constructor { namespace solvers {
@@ -96,12 +97,19 @@ bool CartesianPath::plan(const planning_scene::PlanningSceneConstPtr& from,
 		      && kcs.decide(*state).satisfied;
 	};
 
+
+	// Minimize displacement of joint states when usind BioIK
+	bio_ik::BioIKKinematicsQueryOptions options;
+	options.goals.emplace_back(new bio_ik::MinimalDisplacementGoal(1, false));
+	options.return_approximate_solution = true;
+
 	std::vector<moveit::core::RobotStatePtr> trajectory;
 	double achieved_fraction = sandbox_scene->getCurrentStateNonConst().computeCartesianPath(
 	                              jmg, trajectory, &link, target, true,
 	                              props.get<double>("step_size"),
 	                              props.get<double>("jump_threshold"),
-	                              isValid);
+	                              isValid,
+				      options);
 
 	if (!trajectory.empty()) {
 		result.reset(new robot_trajectory::RobotTrajectory(sandbox_scene->getRobotModel(), jmg));
